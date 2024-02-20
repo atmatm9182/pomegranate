@@ -1,3 +1,5 @@
+use std::path::{self, Path};
+
 use toml::Value;
 
 #[derive(Debug)]
@@ -68,7 +70,16 @@ impl<'a> Entry<'a> {
     fn parse_dir(name: &'a str, entries: &'a Vec<toml::Value>) -> Result<Self, Error> {
         let mut entries_vec = vec![];
         for spec in entries {
-            let entry = Entry::parse(name, spec)?;
+            let entry_name = spec
+                .get("name")
+                .ok_or(Error::missing_keys(name, vec!["name"]))?;
+            let entry_name = entry_name.as_str().ok_or(Error::wrong_key_type(
+                name,
+                "name",
+                vec!["string"],
+                entry_name.type_str(),
+            ))?;
+            let entry = Entry::parse(entry_name, spec)?;
             entries_vec.push(entry);
         }
 
@@ -90,8 +101,8 @@ impl Default for Entry<'_> {
 
 #[derive(Debug, Default)]
 pub struct Blueprint<'a> {
-    name: &'a str,
-    dir_tree: Vec<Entry<'a>>,
+    pub name: &'a str,
+    pub dir_tree: Vec<Entry<'a>>,
 }
 
 #[derive(Debug)]

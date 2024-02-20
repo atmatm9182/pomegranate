@@ -1,4 +1,5 @@
 mod blueprint;
+mod scaffolder;
 use blueprint::Blueprint;
 
 fn main() {
@@ -8,4 +9,5 @@ fn main() {
     let table: toml::Table = toml::from_str(config_str).unwrap();
     let blueprint = Blueprint::from_toml(&table).unwrap();
     println!("{blueprint:?}");
+    scaffolder::scaffold(blueprint).unwrap();
 }
