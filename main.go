@@ -16,7 +16,7 @@ func main() {
 	}
 
 	repo := args[0]
-	b, err := blueprint.FromRepo(repo, "pomegranate.yaml")
+	b, err := blueprint.FromRepo(repo, "pomegranate.yml")
 	if err != nil {
 		log.Fatalln(err)
 	}
