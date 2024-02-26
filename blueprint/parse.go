@@ -28,7 +28,7 @@ func Parse(configPath string) (blueprint Blueprint, err error) {
 		configPath = path.Join(configPath, DefaultBlueprintPath)
 		configData, err = os.ReadFile(configPath)
 	} else {
-		configData = make([]byte, 0, stat.Size())
+		configData = make([]byte, stat.Size())
 		_, err = configFile.Read(configData)
 	}
 
