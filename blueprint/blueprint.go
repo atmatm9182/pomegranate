@@ -11,6 +11,10 @@ import (
 
 var logger = log.Default()
 
+func init() {
+	logger.SetFlags(log.LstdFlags & ^log.Ltime & ^log.Ldate)
+}
+
 type FileSpec struct {
 	Type    string
 	Raw     string
