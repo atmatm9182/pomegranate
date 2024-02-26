@@ -7,12 +7,20 @@ import (
 	"log"
 	"os"
 	"path"
+	"runtime"
 )
 
 var logger = log.Default()
 
 func init() {
 	logger.SetFlags(log.LstdFlags & ^log.Ltime & ^log.Ldate)
+}
+
+func DisableLogging() {
+	nullDevice := getNullDevice()
+	if nullDevice != nil {
+		logger.SetOutput(nullDevice)
+	}
 }
 
 type FileSpec struct {
@@ -183,4 +191,19 @@ func logCreating(name string) {
 
 func logCopying(src, dest string) {
 	logger.Printf("Copying '%s' to '%s'...\n", src, dest)
+}
+
+func getNullDevice() *os.File {
+	var nullFileName string
+	switch runtime.GOOS {
+	case "linux", "darwin", "freebsd", "openbsd", "netbsd":
+		nullFileName = "/dev/null"
+	case "windows":
+		nullFileName = "nul"
+	default:
+		return nil
+	}
+
+	f, _ := os.OpenFile(nullFileName, os.O_RDWR, 0)
+	return f
 }

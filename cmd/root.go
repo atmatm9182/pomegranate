@@ -7,16 +7,25 @@ import (
 	"os"
 
 	"github.com/atmatm9182/pomegranate/blueprint"
+	"github.com/atmatm9182/pomegranate/gitapi"
 )
 
 var (
 	scaffoldCmd = flag.NewFlagSet("scaffold", flag.ExitOnError)
 	scaffoldRemote = scaffoldCmd.Bool("remote", false, "scaffold the project using remote git repository")
 	scaffoldName = scaffoldCmd.String("name", blueprint.DefaultBlueprintPath, "the name of the file containing the blueprint")
+
+	silentFlag bool
 )
 
 var cmds = map[string]*flag.FlagSet {
 	"scaffold": scaffoldCmd,
+}
+
+func init() {
+	for _, cmd := range cmds {
+		cmd.BoolVar(&silentFlag, "silent", false, "disable all logging")
+	}
 }
 
 const pomegranateUsage = `pomegranate is a tool for project scaffolding.
@@ -45,6 +54,11 @@ func execScaffold() error {
 		b blueprint.Blueprint
 		err error
 	)
+
+	if silentFlag {
+		gitapi.EnableLogging = false
+		blueprint.DisableLogging()
+	}
 	
 	if *scaffoldRemote {
 		b, err = blueprint.FromRepo(args[0], *scaffoldName)
