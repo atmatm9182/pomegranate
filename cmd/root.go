@@ -5,28 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-
-	"github.com/atmatm9182/pomegranate/blueprint"
-	"github.com/atmatm9182/pomegranate/gitapi"
 )
-
-var (
-	scaffoldCmd = flag.NewFlagSet("scaffold", flag.ExitOnError)
-	scaffoldRemote = scaffoldCmd.Bool("remote", false, "scaffold the project using remote git repository")
-	scaffoldName = scaffoldCmd.String("name", blueprint.DefaultBlueprintPath, "the name of the blueprint file in the git repository")
-
-	silentFlag bool
-)
-
-var cmds = map[string]*flag.FlagSet {
-	"scaffold": scaffoldCmd,
-}
-
-func init() {
-	for _, cmd := range cmds {
-		cmd.BoolVar(&silentFlag, "silent", false, "disable all logging")
-	}
-}
 
 const pomegranateUsage = `pomegranate is a tool for project scaffolding.
 
@@ -41,38 +20,6 @@ Use pomegranate <command> --help for more information about a specific command.
 
 func usage() {
 	fmt.Println(pomegranateUsage)
-}
-
-func execScaffold() error {
-	args := scaffoldCmd.Args()
-	if len(args) == 0 {
-		scaffoldCmd.Usage()
-		return errors.New("Not enough arguments")
-	}
-
-	var (
-		b blueprint.Blueprint
-		err error
-	)
-
-	if silentFlag {
-		gitapi.EnableLogging = false
-		blueprint.DisableLogging()
-	}
-	
-	if *scaffoldRemote {
-		b, err = blueprint.FromRepo(args[0], *scaffoldName)
-		if err != nil {
-			return err
-		}
-	} else {
-		b, err = blueprint.Parse(args[0])
-		if err != nil {
-			return err
-		}
-	}
-
-	return b.Scaffold()
 }
 
 func Execute() error {
