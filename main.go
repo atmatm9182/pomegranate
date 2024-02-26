@@ -2,28 +2,14 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
-	"github.com/atmatm9182/pomegranate/blueprint"
+	"github.com/atmatm9182/pomegranate/cmd"
 )
 
 func main() {
-	args := os.Args[1:]
-	if len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "ERROR: expected at least one argument\n")
+	if err := cmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
-	}
-
-	repo := args[0]
-	_ = repo
-	b, err := blueprint.Parse("config.yml")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	err = b.Scaffold()
-	if err != nil {
-		log.Fatalln(err)
 	}
 }
