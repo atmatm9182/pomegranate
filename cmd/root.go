@@ -13,7 +13,7 @@ import (
 var (
 	scaffoldCmd = flag.NewFlagSet("scaffold", flag.ExitOnError)
 	scaffoldRemote = scaffoldCmd.Bool("remote", false, "scaffold the project using remote git repository")
-	scaffoldName = scaffoldCmd.String("name", blueprint.DefaultBlueprintPath, "the name of the file containing the blueprint")
+	scaffoldName = scaffoldCmd.String("name", blueprint.DefaultBlueprintPath, "the name of the blueprint file in the git repository")
 
 	silentFlag bool
 )
