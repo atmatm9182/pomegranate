@@ -8,7 +8,7 @@ import (
 	"github.com/atmatm9182/pomegranate/gitapi"
 )
 
-func FromRepo(url string, bluepintPath string) (Blueprint, error) {
+func FromRepo(url string, blueprintPath string) (Blueprint, error) {
 	tmpDir := os.TempDir()
 	if len(tmpDir) == 0 {
 		panic("you don't have a temporary directory!")
@@ -26,5 +26,5 @@ func FromRepo(url string, bluepintPath string) (Blueprint, error) {
 		return Blueprint{}, err
 	}
 
-	return Parse(bluepintPath)
+	return Parse(blueprintPath)
 }
