@@ -2,6 +2,7 @@ package blueprint
 
 import (
 	"os"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -16,5 +17,6 @@ func Parse(configPath string) (blueprint Blueprint, err error) {
     }
 
     err = yaml.Unmarshal(configData, &blueprint)
+	blueprint.absolutePath = path.Dir(configPath)
     return
 }

@@ -86,6 +86,7 @@ func (s *FileSpec) scaffold(name string) error {
 }
 
 type Blueprint struct {
+	absolutePath string
 	Project struct {
 		Name  string
 		Files map[string]FileSpec
@@ -93,6 +94,8 @@ type Blueprint struct {
 }
 
 func (b *Blueprint) Scaffold() error {
+	concatSrcWithPath(b.absolutePath, b.Project.Files)
+	
 	logger.Printf("Scaffolding blueprint for project '%s'\n", b.Project.Name)
 	for name, spec := range b.Project.Files {
 		if err := spec.scaffold(name); err != nil {
@@ -102,6 +105,19 @@ func (b *Blueprint) Scaffold() error {
 
 	logger.Println("Scaffolding success!")
 	return nil
+}
+
+func concatSrcWithPath(absolutePath string, files map[string]FileSpec) {
+	for fileName, fileSpec := range files {
+		if len(fileSpec.Src) != 0 {
+			fileSpec.Src = path.Join(absolutePath, fileSpec.Src)
+			files[fileName] = fileSpec
+		}
+
+		if fileSpec.Type == "dir" {
+			concatSrcWithPath(path.Join(absolutePath, fileName), fileSpec.Entries)
+		}
+	}
 }
 
 func copyDir(src string, dest string) error {

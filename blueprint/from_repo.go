@@ -26,5 +26,6 @@ func FromRepo(url string, blueprintPath string) (Blueprint, error) {
 		return Blueprint{}, err
 	}
 
+	blueprintPath = path.Join(folderName, blueprintPath)
 	return Parse(blueprintPath)
 }
