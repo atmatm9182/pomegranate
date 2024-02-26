@@ -4,24 +4,16 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path"
-	"runtime"
+
+	"github.com/atmatm9182/pomegranate/blueprint/options"
 )
 
-var logger = log.Default()
-
-func init() {
-	logger.SetFlags(log.LstdFlags & ^log.Ltime & ^log.Ldate)
-}
-
-func DisableLogging() {
-	nullDevice := getNullDevice()
-	if nullDevice != nil {
-		logger.SetOutput(nullDevice)
-	}
-}
+var (
+	logger = options.GetLogger()
+	scaffoldPrefix = options.GetScaffoldPrefix()
+)
 
 type FileSpec struct {
 	Type    string
@@ -31,6 +23,8 @@ type FileSpec struct {
 }
 
 func (s *FileSpec) scaffoldFile(name string) error {
+	name = path.Join(*scaffoldPrefix, name)
+	
 	logCreating(name)
 	f, err := os.Create(name)
 	if err != nil {
@@ -56,6 +50,8 @@ func (s *FileSpec) scaffoldFile(name string) error {
 }
 
 func (s *FileSpec) scaffoldDir(name string) error {
+	name = path.Join(*scaffoldPrefix, name)
+	
 	err := os.Mkdir(name, 0777)
 	if err != nil {
 		return err
@@ -191,19 +187,4 @@ func logCreating(name string) {
 
 func logCopying(src, dest string) {
 	logger.Printf("Copying '%s' to '%s'...\n", src, dest)
-}
-
-func getNullDevice() *os.File {
-	var nullFileName string
-	switch runtime.GOOS {
-	case "linux", "darwin", "freebsd", "openbsd", "netbsd":
-		nullFileName = "/dev/null"
-	case "windows":
-		nullFileName = "nul"
-	default:
-		return nil
-	}
-
-	f, _ := os.OpenFile(nullFileName, os.O_RDWR, 0)
-	return f
 }
