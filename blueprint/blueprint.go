@@ -4,9 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path"
 )
+
+var logger = log.Default()
 
 type FileSpec struct {
 	Type    string
@@ -16,6 +19,7 @@ type FileSpec struct {
 }
 
 func (s *FileSpec) scaffoldFile(name string) error {
+	logCreating(name)
 	f, err := os.Create(name)
 	if err != nil {
 		return err
@@ -25,6 +29,7 @@ func (s *FileSpec) scaffoldFile(name string) error {
 	if len(s.Raw) != 0 {
 		_, err = f.Write([]byte(s.Raw))
 	} else if len(s.Src) != 0 {
+		logCopying(s.Src, name)
 		err = copyFile(s.Src, name)
 	} else {
 		err = fmt.Errorf("Neither 'raw' or 'src' are specified for file %s", name)
@@ -45,6 +50,7 @@ func (s *FileSpec) scaffoldDir(name string) error {
 	}
 
 	if len(s.Src) != 0 {
+		logCopying(s.Src, name)
 		err = copyDir(s.Src, name)
 		if err != nil {
 			return errors.Join(err, os.RemoveAll(name))
@@ -65,8 +71,10 @@ func (s *FileSpec) scaffoldDir(name string) error {
 func (s *FileSpec) scaffold(name string) error {
 	switch s.Type {
 	case "file":
+		logger.Printf("Scaffolding file '%s'...\n", name)
 		return s.scaffoldFile(name)
 	case "dir":
+		logger.Printf("Scaffolding dir '%s'...\n", name)
 		return s.scaffoldDir(name)
 	default:
 		return fmt.Errorf("Entry type '%s' is not a valid entry type", s.Type)
@@ -81,12 +89,14 @@ type Blueprint struct {
 }
 
 func (b *Blueprint) Scaffold() error {
+	logger.Printf("Scaffolding blueprint for project '%s'\n", b.Project.Name)
 	for name, spec := range b.Project.Files {
 		if err := spec.scaffold(name); err != nil {
 			return err
 		}
 	}
 
+	logger.Println("Scaffolding success!")
 	return nil
 }
 
@@ -111,13 +121,14 @@ func copyDir(src string, dest string) error {
 		}
 		
 		entryName := entryInfo.Name()
-		fullEntryPath := path.Join(src, entryName)
+		srcEntryPath := path.Join(src, entryName)
 		destEntryPath := path.Join(dest, entryName)
 
+		logCopying(srcEntryPath, destEntryPath)
 		if entryInfo.IsDir() {
-			err = copyDir(fullEntryPath, destEntryPath)
+			err = copyDir(srcEntryPath, destEntryPath)
 		} else {
-			err = copyFile(fullEntryPath, destEntryPath)
+			err = copyFile(srcEntryPath, destEntryPath)
 		}
 
 		if err != nil {
@@ -144,4 +155,12 @@ func copyFile(src, dest string) error {
 
 	_, err = io.Copy(destFile, srcFile)
 	return err
+}
+
+func logCreating(name string) {
+	logger.Printf("Creating '%s'...\n", name)
+}
+
+func logCopying(src, dest string) {
+	logger.Printf("Copying '%s' to '%s'...\n", src, dest)
 }
