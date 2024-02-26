@@ -19,6 +19,21 @@ var cmds = map[string]*flag.FlagSet {
 	"scaffold": scaffoldCmd,
 }
 
+const pomegranateUsage = `pomegranate is a tool for project scaffolding.
+
+Usage:
+    pomegranate <command> [arguments]
+
+The commands are:
+    scaffold - scaffold the project using provided blueprint
+
+Use pomegranate <command> --help for more information about a specific command.
+`
+
+func usage() {
+	fmt.Println(pomegranateUsage)
+}
+
 func execScaffold() error {
 	args := scaffoldCmd.Args()
 	if len(args) == 0 {
@@ -47,6 +62,8 @@ func execScaffold() error {
 }
 
 func Execute() error {
+	flag.Usage = usage
+	
 	args := os.Args[1:]
 	if len(args) == 0 {
 		flag.Usage()
@@ -58,6 +75,9 @@ func Execute() error {
 		if err := scaffoldCmd.Parse(args[1:]); err == nil {
 			return execScaffold()
 		}
+	case "--help", "-help", "-h":
+		flag.Usage()
+		os.Exit(0)
 	default:
 		return fmt.Errorf("Unknown command %s", args[0])
 	}
