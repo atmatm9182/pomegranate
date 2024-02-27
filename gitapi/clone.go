@@ -13,16 +13,12 @@ func Clone(url string, where string) error {
 		return err
 	}
 	
-	err = os.MkdirAll(where, 0777)
-	if err != nil {
-		return err
-	}
-
 	cloneCmd := exec.Command("git", "clone", "--depth=1", url, where)
 	if EnableLogging {
 		cloneCmd.Stdout = os.Stdout
 		cloneCmd.Stderr = os.Stderr
 	}
+	
 	cloneCmd.Stdin = os.Stdin
 	return cloneCmd.Run()
 }
