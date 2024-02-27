@@ -7,6 +7,8 @@ import (
 	"runtime"
 )
 
+const DefaultScaffoldPrefix = "./"
+
 func getNullDevice() *os.File {
 	var nullFileName string
 	switch runtime.GOOS {
@@ -24,12 +26,14 @@ func getNullDevice() *os.File {
 
 type ScaffoldingOptions struct {
 	EnableLogging  bool
+	EnableCaching  bool
 	ScaffoldPrefix string
 }
 
 func DefaultScaffolding() ScaffoldingOptions {
 	return ScaffoldingOptions{
-		EnableLogging: true,
+		EnableLogging:  true,
+		EnableCaching:  false,
 		ScaffoldPrefix: "",
 	}
 }

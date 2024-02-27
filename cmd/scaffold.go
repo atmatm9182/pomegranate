@@ -10,15 +10,10 @@ import (
 	"github.com/atmatm9182/pomegranate/gitapi"
 )
 
-const (
-	defaultScaffoldDest = "./"
-)
-
 var (
 	scaffoldCmd    = flag.NewFlagSet("scaffold", flag.ExitOnError)
 	scaffoldRemote = scaffoldCmd.Bool("remote", false, "scaffold the project using remote git repository")
-	scaffoldName   = scaffoldCmd.String("name", blueprint.DefaultBlueprintPath, "the name of the blueprint file in the git repository")
-	scaffoldDest   = scaffoldCmd.String("o", defaultScaffoldDest, "where to scaffold the project")
+	scaffoldDest   = scaffoldCmd.String("o", options.DefaultScaffoldPrefix, "where to scaffold the project")
 )
 
 func execScaffold() error {
@@ -36,7 +31,7 @@ func execScaffold() error {
 
 	opts.ScaffoldPrefix = *scaffoldDest
 	var err error
-	if *scaffoldDest != defaultScaffoldDest {
+	if *scaffoldDest != options.DefaultScaffoldPrefix {
 		err = os.MkdirAll(*scaffoldDest, 0777)
 		if err != nil {
 			return err
@@ -51,7 +46,7 @@ func execScaffold() error {
 
 	var b blueprint.Blueprint
 	if *scaffoldRemote {
-		b, err = blueprint.FromRepo(args[0], *scaffoldName)
+		b, err = blueprint.FromRepo(args[0], nameFlag)
 		if err != nil {
 			return err
 		}

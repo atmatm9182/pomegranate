@@ -31,10 +31,15 @@ func Execute() error {
 		return errors.New("No subcommand provided")
 	}
 
+	// TODO: refactor this
 	switch args[0] {
 	case "scaffold":
 		if err := scaffoldCmd.Parse(args[1:]); err == nil {
 			return execScaffold()
+		}
+	case "cache":
+		if err := cacheCmd.Parse(args[1:]); err == nil {
+			return execCache()
 		}
 	case "--help", "-help", "-h":
 		flag.Usage()

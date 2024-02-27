@@ -3,9 +3,9 @@ package blueprint
 import (
 	"os"
 	"path"
-	"strings"
-	
+
 	"github.com/atmatm9182/pomegranate/gitapi"
+	"github.com/atmatm9182/pomegranate/util"
 )
 
 func FromRepo(url string, blueprintPath string) (Blueprint, error) {
@@ -13,12 +13,9 @@ func FromRepo(url string, blueprintPath string) (Blueprint, error) {
 	if len(tmpDir) == 0 {
 		panic("you don't have a temporary directory!")
 	}
-	
-	urlParts := strings.Split(url, "/")
-	
-	idx := max(len(urlParts) - 2, 0)
-	repoFolderName := "pomegranate-"
-	repoFolderName += strings.Join(urlParts[idx:], "-")
+
+	repoFolderName := util.RepoNameToFolderName(url)
+	repoFolderName += "pomegranate"
 	folderName := path.Join(tmpDir, repoFolderName)
 
 	err := gitapi.Clone(url, folderName)

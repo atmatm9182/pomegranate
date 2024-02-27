@@ -9,6 +9,7 @@ import (
 	"path"
 
 	"github.com/atmatm9182/pomegranate/blueprint/options"
+	"github.com/atmatm9182/pomegranate/util"
 )
 
 type Scaffolder struct {
@@ -27,6 +28,15 @@ func (s *Scaffolder) Scaffold(b *Blueprint) error {
 	concatSrcWithPath(b.absolutePath, b.Project.Files)
 
 	s.logger.Printf("Scaffolding blueprint for project '%s'\n", b.Project.Name)
+
+	// create the prefix dir
+	if s.prefix != options.DefaultScaffoldPrefix {
+		s.logCreating(s.prefix)
+		if err := os.MkdirAll(s.prefix, 0777); err != nil {
+			return err
+		}
+	}
+	
 	for name, spec := range b.Project.Files {
 		if err := s.scaffold(&spec, name); err != nil {
 			return err
@@ -144,8 +154,13 @@ func (s *Scaffolder) scaffoldFile(spec *FileSpec, name string) error {
 
 func (s *Scaffolder) scaffoldDir(spec *FileSpec, name string) error {
 	name = path.Join(s.prefix, name)
+
+	// do not create target directory if it already exists because we don't want to override existing files
+	if util.FileExists(name) {
+		return fmt.Errorf("Could not create directory %s, because it already exists", name)
+	}
 	
-	err := os.Mkdir(name, 0777)
+	err := os.MkdirAll(name, 0777)
 	if err != nil {
 		return err
 	}
