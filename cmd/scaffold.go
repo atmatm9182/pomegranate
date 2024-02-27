@@ -18,8 +18,7 @@ var (
 	scaffoldCmd    = flag.NewFlagSet("scaffold", flag.ExitOnError)
 	scaffoldRemote = scaffoldCmd.Bool("remote", false, "scaffold the project using remote git repository")
 	scaffoldName   = scaffoldCmd.String("name", blueprint.DefaultBlueprintPath, "the name of the blueprint file in the git repository")
-
-	scaffoldDest = scaffoldCmd.String("o", defaultScaffoldDest, "where to scaffold the project")
+	scaffoldDest   = scaffoldCmd.String("o", defaultScaffoldDest, "where to scaffold the project")
 )
 
 func execScaffold() error {
@@ -29,17 +28,14 @@ func execScaffold() error {
 		return errors.New("Not enough arguments")
 	}
 
-	var (
-		b   blueprint.Blueprint
-		err error
-	)
-
+	var opts options.ScaffoldingOptions
 	if silentFlag {
 		gitapi.EnableLogging = false
-		options.DisableLogging()
+		opts.EnableLogging = false
 	}
 
-	options.SetScaffoldPrefix(*scaffoldDest)
+	opts.ScaffoldPrefix = *scaffoldDest
+	var err error
 	if *scaffoldDest != defaultScaffoldDest {
 		err = os.MkdirAll(*scaffoldDest, 0777)
 		if err != nil {
@@ -53,6 +49,7 @@ func execScaffold() error {
 		}()
 	}
 
+	var b blueprint.Blueprint
 	if *scaffoldRemote {
 		b, err = blueprint.FromRepo(args[0], *scaffoldName)
 		if err != nil {
@@ -65,6 +62,6 @@ func execScaffold() error {
 		}
 	}
 
-	err = b.Scaffold()
+	err = b.Scaffold(opts)
 	return err
 }

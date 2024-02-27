@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path"
 
@@ -11,8 +12,8 @@ import (
 )
 
 var (
-	logger = options.GetLogger()
-	scaffoldPrefix = options.GetScaffoldPrefix()
+	logger *log.Logger
+	scaffoldPrefix string
 )
 
 type FileSpec struct {
@@ -23,7 +24,7 @@ type FileSpec struct {
 }
 
 func (s *FileSpec) scaffoldFile(name string) error {
-	name = path.Join(*scaffoldPrefix, name)
+	name = path.Join(scaffoldPrefix, name)
 	
 	logCreating(name)
 	f, err := os.Create(name)
@@ -50,7 +51,7 @@ func (s *FileSpec) scaffoldFile(name string) error {
 }
 
 func (s *FileSpec) scaffoldDir(name string) error {
-	name = path.Join(*scaffoldPrefix, name)
+	name = path.Join(scaffoldPrefix, name)
 	
 	err := os.Mkdir(name, 0777)
 	if err != nil {
@@ -97,7 +98,8 @@ type Blueprint struct {
 	}
 }
 
-func (b *Blueprint) Scaffold() error {
+func (b *Blueprint) Scaffold(opts options.ScaffoldingOptions) error {
+	setGlobalsFromOptions(opts)
 	concatSrcWithPath(b.absolutePath, b.Project.Files)
 	
 	logger.Printf("Scaffolding blueprint for project '%s'\n", b.Project.Name)
@@ -187,4 +189,9 @@ func logCreating(name string) {
 
 func logCopying(src, dest string) {
 	logger.Printf("Copying '%s' to '%s'...\n", src, dest)
+}
+
+func setGlobalsFromOptions(opts options.ScaffoldingOptions) {
+	logger = opts.GetLogger()
+	scaffoldPrefix = opts.ScaffoldPrefix
 }
