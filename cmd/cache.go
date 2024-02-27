@@ -6,8 +6,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/atmatm9182/pomegranate/blueprint"
-	"github.com/atmatm9182/pomegranate/blueprint/options"
+	"github.com/atmatm9182/pomegranate/gitapi"
 	"github.com/atmatm9182/pomegranate/util"
 )
 
@@ -24,20 +23,13 @@ func execCache() error {
 	
 	repoUrl := args[0]
 	cacheDir := getCacheDir()
-	opts := options.DefaultScaffolding()
 	destDir := path.Join(cacheDir, "pomegranate", util.RepoNameToFolderName(repoUrl))
 
 	if util.FileExists(destDir) {
 		return nil
 	}
-	
-	b, err := blueprint.FromRepo(repoUrl, nameFlag)
-	if err != nil {
-		return err
-	}
 
-	sc := blueprint.NewScaffolder(&opts)
-	return sc.Scaffold(&b)
+	return gitapi.Clone(repoUrl, destDir)
 }
 
 func getCacheDir() string {
