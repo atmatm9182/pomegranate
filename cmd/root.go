@@ -12,8 +12,9 @@ const pomegranateUsage = `pomegranate is a tool for project scaffolding.
 Usage:
     pomegranate <command> [arguments]
 
-The commands are:
+Commands:
     scaffold - scaffold the project using provided blueprint
+    cache    - save a remote directory to local cache to use later
 
 Use pomegranate <command> --help for more information about a specific command.
 `
