@@ -29,16 +29,23 @@ func (s *Scaffolder) Scaffold(b *Blueprint) error {
 
 	s.logger.Printf("Scaffolding blueprint for project '%s'\n", b.Project.Name)
 
+	var err error
 	// create the prefix dir
 	if s.prefix != options.DefaultScaffoldPrefix {
 		s.logCreating(s.prefix)
-		if err := os.MkdirAll(s.prefix, 0777); err != nil {
+		if err = os.MkdirAll(s.prefix, 0777); err != nil {
 			return err
 		}
+
+		defer func() {
+			if err != nil {
+				os.RemoveAll(s.prefix)
+			}
+		}()
 	}
 	
 	for name, spec := range b.Project.Files {
-		if err := s.scaffold(&spec, name); err != nil {
+		if err = s.scaffold(&spec, name); err != nil {
 			return err
 		}
 	}
