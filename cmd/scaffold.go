@@ -28,7 +28,7 @@ func execScaffold() error {
 		return errors.New("Not enough arguments")
 	}
 
-	var opts options.ScaffoldingOptions
+	opts := options.DefaultScaffolding()
 	if silentFlag {
 		gitapi.EnableLogging = false
 		opts.EnableLogging = false
@@ -62,6 +62,7 @@ func execScaffold() error {
 		}
 	}
 
-	err = b.Scaffold(opts)
+	sc := blueprint.NewScaffolder(&opts)
+	err = sc.Scaffold(&b)
 	return err
 }

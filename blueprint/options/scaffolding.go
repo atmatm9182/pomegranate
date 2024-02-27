@@ -27,6 +27,13 @@ type ScaffoldingOptions struct {
 	ScaffoldPrefix string
 }
 
+func DefaultScaffolding() ScaffoldingOptions {
+	return ScaffoldingOptions{
+		EnableLogging: true,
+		ScaffoldPrefix: "",
+	}
+}
+
 func (s *ScaffoldingOptions) GetLogger() *log.Logger {
 	var outputDevice io.Writer
 	if s.EnableLogging {
