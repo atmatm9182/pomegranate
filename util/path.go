@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func RepoNameToFolderName(url string) string {
+func RepoUrlToFolderName(url string) string {
 	urlParts := strings.Split(url, "/")
 	
 	idx := max(len(urlParts) - 2, 0)

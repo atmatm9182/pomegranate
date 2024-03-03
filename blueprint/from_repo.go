@@ -14,7 +14,7 @@ func FromRepo(url string, blueprintPath string) (Blueprint, error) {
 		panic("you don't have a temporary directory!")
 	}
 
-	repoFolderName := util.RepoNameToFolderName(url)
+	repoFolderName := util.RepoUrlToFolderName(url)
 	repoFolderName += "pomegranate"
 	folderName := path.Join(tmpDir, repoFolderName)
 

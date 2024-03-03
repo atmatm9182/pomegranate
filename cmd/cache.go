@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"flag"
-	"os"
 	"path"
 
 	"github.com/atmatm9182/pomegranate/gitapi"
@@ -22,21 +21,12 @@ func execCache() error {
 	}
 	
 	repoUrl := args[0]
-	cacheDir := getCacheDir()
-	destDir := path.Join(cacheDir, "pomegranate", util.RepoNameToFolderName(repoUrl))
+	cacheDir := util.GetCacheDirPath()
+	destDir := path.Join(cacheDir, util.RepoUrlToFolderName(repoUrl))
 
 	if util.FileExists(destDir) {
 		return nil
 	}
 
 	return gitapi.Clone(repoUrl, destDir)
-}
-
-func getCacheDir() string {
-	dir, err := os.UserCacheDir()
-	if err != nil {
-		panic("Your system does not support caching!")
-	}
-
-	return dir
 }

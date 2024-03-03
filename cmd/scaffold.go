@@ -46,9 +46,12 @@ func execScaffold() error {
 
 	var b blueprint.Blueprint
 	if *scaffoldRemote {
-		b, err = blueprint.FromRepo(args[0], nameFlag)
+		b, err = blueprint.FromCache(args[0], nameFlag)
 		if err != nil {
-			return err
+			b, err = blueprint.FromRepo(args[0], nameFlag)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		b, err = blueprint.Parse(args[0])
