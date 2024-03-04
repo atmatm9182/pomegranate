@@ -15,6 +15,7 @@ Usage:
 Commands:
     scaffold - scaffold the project using provided blueprint
     cache    - save a remote directory to local cache to use later
+    aliases  - list all aliases
 
 Use pomegranate <command> --help for more information about a specific command.
 `
@@ -42,6 +43,10 @@ func Execute() error {
 		if err := cacheCmd.Parse(args[1:]); err == nil {
 			return execCache()
 		}
+    case "aliases":
+        if err := aliasesCmd.Parse(args[1:]); err == nil {
+            return execAliases()
+        }
 	case "--help", "-help", "-h":
 		flag.Usage()
 		os.Exit(0)

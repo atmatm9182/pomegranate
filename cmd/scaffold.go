@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"os"
 
 	"github.com/atmatm9182/pomegranate/blueprint"

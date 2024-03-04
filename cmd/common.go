@@ -18,6 +18,7 @@ var (
 var cmds = map[string]*flag.FlagSet{
 	"scaffold": scaffoldCmd,
 	"cache":    cacheCmd,
+    "aliases":  aliasesCmd,
 }
 
 func init() {
