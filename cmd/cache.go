@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	cacheCmd = flag.NewFlagSet("cache", flag.ExitOnError)
+	cacheCmd   = flag.NewFlagSet("cache", flag.ExitOnError)
+	cacheAlias = cacheCmd.String("alias", "", "cache the remote blueprint with a specified alias")
 )
 
 func execCache() error {
@@ -19,14 +20,38 @@ func execCache() error {
 		cacheCmd.Usage()
 		return errors.New("Not enough arguments")
 	}
-	
+
 	repoUrl := args[0]
+
 	cacheDir := util.GetCacheDirPath()
 	destDir := path.Join(cacheDir, util.RepoUrlToFolderName(repoUrl))
 
 	if util.FileExists(destDir) {
-		return nil
+        if len(*cacheAlias) != 0 {
+            return createAlias(repoUrl, *cacheAlias)
+        }
+
+        return nil
 	}
 
-	return gitapi.Clone(repoUrl, destDir)
+    err := gitapi.Clone(repoUrl, destDir)
+    if err != nil {
+        return err
+    }
+
+    if len(*cacheAlias) == 0 {
+        return nil
+    }
+
+    return createAlias(repoUrl, *cacheAlias)
+}
+
+func createAlias(url, alias string) error {
+    aliasMap, err := readAliasesFile()
+    if err != nil {
+        return err
+    }
+
+	aliasMap[alias] = url
+    return writeAliasesToFile(aliasMap)
 }

@@ -13,3 +13,12 @@ func GetCacheDirPath() string {
 
 	return path.Join(dir, "pomegranate")
 }
+
+func GetConfigDirPath() string {
+    dir, err := os.UserConfigDir()
+    if err != nil {
+        panic(err)
+    }
+
+    return path.Join(dir, "pomegranate")
+}
