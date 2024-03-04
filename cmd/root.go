@@ -15,7 +15,7 @@ Usage:
 Commands:
     scaffold - scaffold the project using provided blueprint
     cache    - save a remote directory to local cache to use later
-    alias  - list all aliases
+    alias    - manage aliases
 
 Use pomegranate <command> --help for more information about a specific command.
 `
