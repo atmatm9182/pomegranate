@@ -10,25 +10,37 @@ import (
 	"github.com/atmatm9182/pomegranate/util"
 )
 
+type command struct {
+    flagSet *flag.FlagSet
+    exec func() error
+}
+
 var (
 	silentFlag bool
 	nameFlag string
 )
 
-var cmds = map[string]*flag.FlagSet{
-	"scaffold": scaffoldCmd,
-	"cache":    cacheCmd,
-    "aliases":  aliasesCmd,
+var cmds = map[string]command{
+	"scaffold": makeCommand(scaffoldCmd, execScaffold),
+	"cache":    makeCommand(cacheCmd, execCache),
+    "aliases":  makeCommand(aliasesCmd, execAliases),
 }
 
 func init() {
 	for _, cmd := range cmds {
-		cmd.BoolVar(&silentFlag, "silent", false, "disable all logging")
+		cmd.flagSet.BoolVar(&silentFlag, "silent", false, "disable all logging")
 	}
 
 	for _, cmd := range []*flag.FlagSet{scaffoldCmd, cacheCmd} {
 		cmd.StringVar(&nameFlag, "name", blueprint.DefaultBlueprintPath, "the name of the blueprint file in the git repository")
 	}
+}
+
+func makeCommand(cmd *flag.FlagSet, exec func() error) command {
+    return command{
+        flagSet: cmd,
+        exec: exec,
+    }
 }
 
 const aliasesFileName = "aliases.json"

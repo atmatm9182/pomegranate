@@ -20,12 +20,12 @@ Commands:
 Use pomegranate <command> --help for more information about a specific command.
 `
 
-func usage() {
+func printUsage() {
 	fmt.Println(pomegranateUsage)
 }
 
 func Execute() error {
-	flag.Usage = usage
+	flag.Usage = printUsage
 	
 	args := os.Args[1:]
 	if len(args) == 0 {
@@ -33,26 +33,12 @@ func Execute() error {
 		return errors.New("No subcommand provided")
 	}
 
-	// TODO: refactor this
-	switch args[0] {
-	case "scaffold":
-		if err := scaffoldCmd.Parse(args[1:]); err == nil {
-			return execScaffold()
-		}
-	case "cache":
-		if err := cacheCmd.Parse(args[1:]); err == nil {
-			return execCache()
-		}
-    case "aliases":
-        if err := aliasesCmd.Parse(args[1:]); err == nil {
-            return execAliases()
+    if cmd, ok := cmds[args[0]]; ok {
+        if err := cmd.flagSet.Parse(args[1:]); err == nil {
+            return cmd.exec()
         }
-	case "--help", "-help", "-h":
-		flag.Usage()
-		os.Exit(0)
-	default:
-		return fmt.Errorf("Unknown command %s", args[0])
-	}
+    }
 
-	panic("should be unreachable")
+    printUsage()
+    return nil
 }
