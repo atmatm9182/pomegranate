@@ -45,13 +45,3 @@ func execCache() error {
 
     return createAlias(repoUrl, *cacheAlias)
 }
-
-func createAlias(url, alias string) error {
-    aliasMap, err := readAliasesFile()
-    if err != nil {
-        return err
-    }
-
-	aliasMap[alias] = url
-    return writeAliasesToFile(aliasMap)
-}

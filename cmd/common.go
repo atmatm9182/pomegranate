@@ -23,7 +23,7 @@ var (
 var cmds = map[string]command{
 	"scaffold": makeCommand(scaffoldCmd, execScaffold),
 	"cache":    makeCommand(cacheCmd, execCache),
-    "aliases":  makeCommand(aliasesCmd, execAliases),
+    "alias":  makeCommand(aliasesCmd, execAliases),
 }
 
 func init() {
@@ -82,4 +82,14 @@ func writeAliasesToFile(aliases map[string]string) error {
 
     encoder := json.NewEncoder(aliasesFile)
     return encoder.Encode(aliases)
+}
+
+func createAlias(url, alias string) error {
+    aliasMap, err := readAliasesFile()
+    if err != nil {
+        return err
+    }
+
+	aliasMap[alias] = url
+    return writeAliasesToFile(aliasMap)
 }
