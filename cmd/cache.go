@@ -27,21 +27,21 @@ func execCache() error {
 	destDir := path.Join(cacheDir, util.RepoUrlToFolderName(repoUrl))
 
 	if util.FileExists(destDir) {
-        if len(*cacheAlias) != 0 {
-            return createAlias(repoUrl, *cacheAlias)
-        }
+		if len(*cacheAlias) != 0 {
+			return createAlias(repoUrl, *cacheAlias)
+		}
 
-        return nil
+		return nil
 	}
 
-    err := gitapi.Clone(repoUrl, destDir)
-    if err != nil {
-        return err
-    }
+	err := gitapi.Clone(repoUrl, destDir)
+	if err != nil {
+		return err
+	}
 
-    if len(*cacheAlias) == 0 {
-        return nil
-    }
+	if len(*cacheAlias) == 0 {
+		return nil
+	}
 
-    return createAlias(repoUrl, *cacheAlias)
+	return createAlias(repoUrl, *cacheAlias)
 }

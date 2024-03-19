@@ -26,19 +26,19 @@ func printUsage() {
 
 func Execute() error {
 	flag.Usage = printUsage
-	
+
 	args := os.Args[1:]
 	if len(args) == 0 {
 		flag.Usage()
 		return errors.New("No subcommand provided")
 	}
 
-    if cmd, ok := cmds[args[0]]; ok {
-        if err := cmd.flagSet.Parse(args[1:]); err == nil {
-            return cmd.exec()
-        }
-    }
+	if cmd, ok := cmds[args[0]]; ok {
+		if err := cmd.flagSet.Parse(args[1:]); err == nil {
+			return cmd.exec()
+		}
+	}
 
-    printUsage()
-    return nil
+	printUsage()
+	return nil
 }

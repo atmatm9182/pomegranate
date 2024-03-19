@@ -9,7 +9,7 @@ type FileSpec struct {
 
 type Blueprint struct {
 	absolutePath string
-	Project struct {
+	Project      struct {
 		Name  string
 		Files map[string]FileSpec
 	}

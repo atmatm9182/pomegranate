@@ -22,8 +22,8 @@ func Parse(configPath string) (blueprint Blueprint, err error) {
 	if err != nil {
 		return
 	}
-	
-    var configData []byte
+
+	var configData []byte
 	if stat.IsDir() {
 		configPath = path.Join(configPath, DefaultBlueprintPath)
 		configData, err = os.ReadFile(configPath)
@@ -32,11 +32,11 @@ func Parse(configPath string) (blueprint Blueprint, err error) {
 		_, err = configFile.Read(configData)
 	}
 
-    if err != nil {
-        return
-    }
+	if err != nil {
+		return
+	}
 
-    err = yaml.Unmarshal(configData, &blueprint)
+	err = yaml.Unmarshal(configData, &blueprint)
 	blueprint.absolutePath = path.Dir(configPath)
-    return
+	return
 }

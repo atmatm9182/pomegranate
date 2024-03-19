@@ -30,7 +30,6 @@ func (s *Scaffolder) Scaffold(b *Blueprint) error {
 	s.logger.Printf("Scaffolding blueprint for project '%s'\n", b.Project.Name)
 
 	var err error
-	// create the prefix dir
 	if s.prefix != options.DefaultScaffoldPrefix {
 		s.logCreating(s.prefix)
 		if err = os.MkdirAll(s.prefix, 0777); err != nil {
@@ -43,7 +42,7 @@ func (s *Scaffolder) Scaffold(b *Blueprint) error {
 			}
 		}()
 	}
-	
+
 	for name, spec := range b.Project.Files {
 		if err = s.scaffold(&spec, name); err != nil {
 			return err
@@ -134,7 +133,7 @@ func (s *Scaffolder) logCopying(src, dest string) {
 
 func (s *Scaffolder) scaffoldFile(spec *FileSpec, name string) error {
 	name = path.Join(s.prefix, name)
-	
+
 	s.logCreating(name)
 	f, err := os.Create(name)
 	if err != nil {
@@ -150,12 +149,12 @@ func (s *Scaffolder) scaffoldFile(spec *FileSpec, name string) error {
 	} else {
 		err = fmt.Errorf("Neither 'raw' or 'src' are specified for file %s", name)
 	}
-	
+
 	if err != nil {
 		removeErr := os.Remove(name)
 		return errors.Join(err, removeErr)
 	}
-	
+
 	return nil
 }
 
@@ -166,7 +165,7 @@ func (s *Scaffolder) scaffoldDir(spec *FileSpec, name string) error {
 	if util.FileExists(name) {
 		return fmt.Errorf("Could not create directory %s, because it already exists", name)
 	}
-	
+
 	err := os.MkdirAll(name, 0777)
 	if err != nil {
 		return err
@@ -179,7 +178,7 @@ func (s *Scaffolder) scaffoldDir(spec *FileSpec, name string) error {
 			return errors.Join(err, os.RemoveAll(name))
 		}
 	}
-	
+
 	for entryName, spec := range spec.Entries {
 		fullPath := path.Join(name, entryName)
 		if err = s.scaffold(&spec, fullPath); err != nil {

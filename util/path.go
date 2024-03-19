@@ -7,8 +7,8 @@ import (
 
 func RepoUrlToFolderName(url string) string {
 	urlParts := strings.Split(url, "/")
-	
-	idx := max(len(urlParts) - 2, 0)
+
+	idx := max(len(urlParts)-2, 0)
 	return strings.Join(urlParts[idx:], "-")
 }
 

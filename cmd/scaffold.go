@@ -47,14 +47,14 @@ func execScaffold() error {
 
 	var b blueprint.Blueprint
 	if *scaffoldRemote {
-        blueprintSource := args[0]
+		blueprintSource := args[0]
 
-        if *scaffoldAlias {
-            blueprintSource = getRemoteUrlByAlias(blueprintSource)
-            if len(blueprintSource) == 0 {
-                return errors.New("No such alias")
-            }
-        }
+		if *scaffoldAlias {
+			blueprintSource = getRemoteUrlByAlias(blueprintSource)
+			if len(blueprintSource) == 0 {
+				return errors.New("No such alias")
+			}
+		}
 
 		b, err = blueprint.FromCache(blueprintSource, nameFlag)
 		if err != nil {
@@ -76,10 +76,10 @@ func execScaffold() error {
 }
 
 func getRemoteUrlByAlias(alias string) string {
-    aliases, err := readAliasesFile()
-    if err != nil {
-        return ""
-    }
+	aliases, err := readAliasesFile()
+	if err != nil {
+		return ""
+	}
 
-    return aliases[alias]
+	return aliases[alias]
 }

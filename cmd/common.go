@@ -11,19 +11,19 @@ import (
 )
 
 type command struct {
-    flagSet *flag.FlagSet
-    exec func() error
+	flagSet *flag.FlagSet
+	exec    func() error
 }
 
 var (
 	silentFlag bool
-	nameFlag string
+	nameFlag   string
 )
 
 var cmds = map[string]command{
 	"scaffold": makeCommand(scaffoldCmd, execScaffold),
 	"cache":    makeCommand(cacheCmd, execCache),
-    "alias":  makeCommand(aliasesCmd, execAliases),
+	"alias":    makeCommand(aliasesCmd, execAliases),
 }
 
 func init() {
@@ -37,59 +37,59 @@ func init() {
 }
 
 func makeCommand(cmd *flag.FlagSet, exec func() error) command {
-    return command{
-        flagSet: cmd,
-        exec: exec,
-    }
+	return command{
+		flagSet: cmd,
+		exec:    exec,
+	}
 }
 
 const aliasesFileName = "aliases.json"
 
 func getAliasesFile() (*os.File, error) {
-    configDir := util.GetConfigDirPath()
-    err := os.MkdirAll(configDir, 0777)
-    if err != nil {
-        return nil, err
-    }
+	configDir := util.GetConfigDirPath()
+	err := os.MkdirAll(configDir, 0777)
+	if err != nil {
+		return nil, err
+	}
 
 	aliasesPath := path.Join(configDir, aliasesFileName)
-	return os.OpenFile(aliasesPath, os.O_CREATE | os.O_RDWR, 0666)
+	return os.OpenFile(aliasesPath, os.O_CREATE|os.O_RDWR, 0666)
 }
 
 func readAliasesFile() (map[string]string, error) {
-    aliasesFile, err := getAliasesFile()
-    if err != nil {
-        return nil, err
-    }
+	aliasesFile, err := getAliasesFile()
+	if err != nil {
+		return nil, err
+	}
 	defer aliasesFile.Close()
 
 	decoder := json.NewDecoder(aliasesFile)
-    if !decoder.More() {
-        return make(map[string]string, 5), nil
-    }
+	if !decoder.More() {
+		return make(map[string]string, 5), nil
+	}
 
 	var aliases map[string]string
 	err = decoder.Decode(&aliases)
-    return aliases, err
+	return aliases, err
 }
 
 func writeAliasesToFile(aliases map[string]string) error {
-    aliasesFile, err := getAliasesFile()
-    if err != nil {
-        return err
-    }
-    defer aliasesFile.Close()
+	aliasesFile, err := getAliasesFile()
+	if err != nil {
+		return err
+	}
+	defer aliasesFile.Close()
 
-    encoder := json.NewEncoder(aliasesFile)
-    return encoder.Encode(aliases)
+	encoder := json.NewEncoder(aliasesFile)
+	return encoder.Encode(aliases)
 }
 
 func createAlias(url, alias string) error {
-    aliasMap, err := readAliasesFile()
-    if err != nil {
-        return err
-    }
+	aliasMap, err := readAliasesFile()
+	if err != nil {
+		return err
+	}
 
 	aliasMap[alias] = url
-    return writeAliasesToFile(aliasMap)
+	return writeAliasesToFile(aliasMap)
 }
